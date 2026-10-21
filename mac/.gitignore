@@ -1,0 +1,7 @@
+# 含推送 token，绝不入库
+config.py
+
+*.log
+__pycache__/
+*.py[cod]
+.DS_Store

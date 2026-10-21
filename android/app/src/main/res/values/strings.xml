@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">归巢</string>
+    <string name="settings">设置</string>
+    <string name="check_now">立即检查</string>
+</resources>

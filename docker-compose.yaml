@@ -1,0 +1,15 @@
+services:
+  homing:
+    build: .
+    image: homing:latest
+    container_name: homing
+    ports:
+      # 放在反向代理后面时改成 "127.0.0.1:8790:8790"，只绑本机
+      - "8790:8790"
+    env_file: .env          # HOMING_PASSWORD / HOMING_TOKEN 等，模板见 .env.example
+    volumes:
+      - homing-data:/data
+    restart: unless-stopped
+
+volumes:
+  homing-data:

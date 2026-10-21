@@ -1,0 +1,9 @@
+{
+  "name": "归巢 Homing",
+  "short_name": "归巢",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#141518",
+  "theme_color": "#5b5bd6",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>登录 · 归巢</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="app.css">
+<script>
+  const t = localStorage.getItem('nc.theme');
+  if (t) document.documentElement.dataset.theme = t;
+</script>
+</head>
+<body class="login-page">
+<main class="login">
+  <form class="login-card" id="form" autocomplete="on">
+    <div class="logo lg">
+      <svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+    </div>
+    <h1>归巢</h1>
+    <p class="login-sub">输入密码以继续</p>
+
+    <!-- 隐藏的用户名字段：让密码管理器能正确识别并保存这条凭据 -->
+    <input type="text" name="username" value="homing" autocomplete="username" hidden>
+
+    <label class="pw" id="pw">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <input id="password" name="password" type="password" placeholder="密码"
+             autocomplete="current-password" autofocus required>
+      <button type="button" class="eye" id="eye" title="显示密码" tabindex="-1">
+        <svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </label>
+    <p class="login-err" id="err" role="alert"></p>
+
+    <button class="primary login-btn" id="submit">
+      <span>登录</span>
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </form>
+</main>
+
+<script>
+const form = document.getElementById('form');
+const pw = document.getElementById('password');
+const err = document.getElementById('err');
+const btn = document.getElementById('submit');
+
+document.getElementById('eye').onclick = () => {
+  pw.type = pw.type === 'password' ? 'text' : 'password';
+  pw.focus();
+};
+
+form.onsubmit = async e => {
+  e.preventDefault();
+  btn.disabled = true;
+  err.textContent = '';
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw.value }),
+    });
+    if (r.ok) {
+      // 保留登录前想去的位置（例如从系统通知点进来的 #/m/123）
+      location.replace('/' + (sessionStorage.getItem('nc.next') || ''));
+      sessionStorage.removeItem('nc.next');
+      return;
+    }
+    const d = await r.json().catch(() => ({}));
+    err.textContent = d.error || `登录失败（${r.status}）`;
+    document.getElementById('pw').classList.remove('shake');
+    void pw.offsetWidth;
+    document.getElementById('pw').classList.add('shake');
+    pw.select();
+  } catch {
+    err.textContent = '网络错误，请重试';
+  } finally {
+    btn.disabled = false;
+  }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+# 签名密钥：丢了就只能卸载重装，自行备份
+keystore.properties
+*.jks
